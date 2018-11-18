@@ -5,8 +5,8 @@ let toVisit = new MinHeap('totalCost');
 let start;
 let end;
 
-let cols = 20;
-let rows = 40;
+let cols = 75;
+let rows = 75;
 
 function distance(x1, y1, x2, y2) {
     return Math.hypot(x2 - x1, y2 - y1);
@@ -27,7 +27,7 @@ function drawPath(node) {
 function setup() {
     createCanvas(window.innerWidth, window.innerHeight);
     background(50);
-    frameRate(20);
+    frameRate(30);
     let lastPos = 5;
     let lastNode = start = new Node(lastPos, lastPos);
     nodes.push(lastNode);
@@ -54,14 +54,14 @@ function setup() {
 
             nodes.push(node);
             lastNode.connect(node);
-            if (Math.random() > 0.9) {
+            if (Math.random() > 0.95) {
                 lastNode = node;
             }
         }
     }
 
     for (let i = 0; i < nodes.length; i++) {
-        if (Math.random() > 0.8) {
+        if (Math.random() > 0.85) {
             let index = Math.floor(random(i + 1, nodes.length - 2));
             let nodeAhead = nodes[index];
             nodes[i].connect(nodeAhead);

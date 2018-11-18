@@ -44,4 +44,9 @@ class Node {
     connect(node) {
         this.connections.push(node);
     }
+
+    shift() {
+        this.x = lerp(this.x, this.x + random(-3, 3), 0.15);
+        this.y = lerp(this.y, this.y + random(-3, 3), 0.15);
+    }
 }
