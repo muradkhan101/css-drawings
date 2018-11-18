@@ -1,6 +1,4 @@
-let nodes = [];
-let visited = [];
-let toVisit = new MinHeap('totalCost');
+let nodes = new MinHeap('distance');
 
 let start;
 let end;
@@ -30,7 +28,8 @@ function setup() {
     frameRate(20);
     let lastPos = 5;
     let lastNode = start = new Node(lastPos, lastPos);
-    nodes.push(lastNode);
+    start.distance = 0;
+    nodes.add(start);
 
     // for (let i = 0; i < 500; i++) {
     //     let x = Math.floor(random(lastPos - 200, lastPos + 250));
@@ -52,7 +51,7 @@ function setup() {
             let y = Math.floor(window.innerHeight / cols) * j + 10;
             let node = new Node(x, y);
 
-            nodes.push(node);
+            nodes.add(node);
             lastNode.connect(node);
             if (Math.random() > 0.9) {
                 lastNode = node;
@@ -60,46 +59,43 @@ function setup() {
         }
     }
 
+    
     for (let i = 0; i < nodes.length; i++) {
         if (Math.random() > 0.8) {
             let index = Math.floor(random(i + 1, nodes.length - 2));
             let nodeAhead = nodes[index];
-            nodes[i].connect(nodeAhead);
+            nodes.stack[i].connect(nodeAhead);
         }
     }
     end = nodes[nodes.length - 1];
+    start.draw();
     end.size = 15;
-    start.updateDistance(0, end);
-    toVisit.add(start);
-    // start.draw();
 
     console.log('Setup Complete!');
 }
-
 function draw() {
-    if (toVisit.peek()) {
+    if (nodes.peek()) {
         background(50);
-        let minNode = toVisit.pop();
+        // Update to use min heap
+        let nextNode = nodes.pop();
+        for (let i = 0; i < nextNode.connections.length; ++i) {
+            connection = nextNode.connections[i];
+            let tempDist = nextNode.distance + distance(nextNode.x, nextNode.y, connection.x, connection.y);
 
-        for (let i = 0; i < minNode.connections.length; ++i) {
-            connection = minNode.connections[i];
+            if (tempDist < connection.distance) {
+                connection.distance = tempDist;
+                connection.parent = nextNode;
+            }
+
             if (connection === end) {
-                toVisit = new MinHeap();
-                connection.parent = minNode;
+                console.log('CONNECTION IS END');
+                nodes = new MinHeap();
                 break;
             }
-            if (visited.includes(connection)) continue;
-            let tempDist = minNode.distance + distance(minNode.x, minNode.y, connection.x, connection.y);
-
-            if (!toVisit.includes(connection)) toVisit.add(connection);
-            else if (tempDist >= connection.distance) continue;
-
-            connection.parent = minNode;
-            connection.updateDistance(tempDist, end);
-            connection.visited = true;
         }
-        nodes[0].draw();
-        drawPath(minNode);
+        nextNode.visited = true;
+        start.draw();
+        drawPath(nextNode);
     } else {
         console.log('DONEZO');
         drawPath(end);
