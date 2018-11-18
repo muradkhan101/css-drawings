@@ -2,34 +2,44 @@ class Node {
     constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.size = 3;
+        this.size = 5;
         this.connections = [];
 
-        this.heuristic = -Infinity;
-        this.distance = -Infinity;
-        this.totalCost = -Infinity;
+        this.heuristic = Infinity;
+        this.distance = Infinity;
+        this.totalCost = Infinity;
+
+        this.parent = null;
+        this.visited = false;
     }
 
-    draw(visited) {
+    draw(visited = [], color = 0) {
         if (!visited.includes(this)) {
             this.updateFill();
-            this.updateStroke();
+            noStroke();
             ellipse(this.x, this.y, this.size);
             visited.push(this);
             this.connections.forEach(edge => {
+                this.updateStroke(color);
                 line(this.x, this.y, edge.x, edge.y);
-                edge.draw(visited);
-                this.updateStroke();
+                edge.draw(visited, 0);
             });
         }
+    }
+    updateDistance(dist, endNode) {
+        this.distance = dist;
+        this.heuristic = distance(this.x, this.y, endNode.x, endNode.y);
+        this.totalCost = this.distance + this.heuristic;
     }
     updateFill() {
         if (this.connections.length) fill(255);
         else fill(200, 0, 0);
+        if (this.visited) fill(0, 200, 200);
     }
-    updateStroke() {
-        if (this.connections.length) stroke(255);
-        else stroke(200, 0, 0);
+    updateStroke(color) {
+        // if (this.connections.length) 
+        stroke(255);
+        // else stroke(200, 0, 0);
     }
     connect(node) {
         this.connections.push(node);
