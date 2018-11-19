@@ -3,6 +3,8 @@ class MinHeap {
         this.stack = [];
         this.prop = prop;
         this.count = 0;
+
+        this.itemSet = new Set();
     }
     getLeftIndex(i) {
         return 2 * i + 1;
@@ -51,6 +53,7 @@ class MinHeap {
         this.stack.push(item);
         this.count++;
         this.heapifyUp();
+        this.itemSet.add(item);
     }
     heapifyUp() {
         let index = this.count - 1;
@@ -84,6 +87,6 @@ class MinHeap {
         }
     }
     includes(item) {
-        return this.stack.includes(item);
+        return this.itemSet.has(item);
     }
 }
