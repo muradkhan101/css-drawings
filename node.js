@@ -13,18 +13,33 @@ class Node {
         this.visited = false;
     }
 
-    draw(visited = [], color = 0) {
-        if (!visited.includes(this)) {
-            this.updateFill();
-            noStroke();
-            ellipse(this.x, this.y, this.size);
-            visited.push(this);
+    draw(visited = new Set(), maker = this.make, color = 0) {
+        if (!visited.has(this)) {
+            maker.bind(this)();
+            visited.add(this);
             this.connections.forEach(edge => {
                 this.updateStroke(color);
                 line(this.x, this.y, edge.x, edge.y);
-                edge.draw(visited, 0);
+                edge.draw(visited, maker, 0);
             });
         }
+    }
+    make() {
+        this.updateFill();
+        noStroke();
+        ellipse(this.x, this.y, this.size);
+    }
+    makeWithSize() {
+        this.updateFill();
+        noStroke();
+        ellipse(this.x, this.y, this.size);
+        const size = this.distance === Infinity
+            ? 10
+            : Math.floor(this.distance / 35)
+        textSize(size);
+        fill('#D60BC5')
+        const textContent = this.distance === Infinity ? '' : Math.floor(this.distance);
+        text(textContent || '', this.x, this.y - this.size / 2 - 1);
     }
     updateDistance(dist, endNode) {
         this.distance = dist;
